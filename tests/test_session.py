@@ -1,7 +1,7 @@
 """Tests for session management."""
 
 import pytest
-from context_decay_drift.core.session import Session, Turn
+from context_drift_analyzer.core.session import Session, Turn
 
 
 class TestSession:

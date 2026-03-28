@@ -5,8 +5,8 @@ import os
 import tempfile
 import pytest
 
-from context_decay_drift.cli.main import cmd_status, cmd_reset, cmd_history, cmd_freeze, cmd_unfreeze
-from context_decay_drift.persistence.session_memory import SessionMemoryData, SessionMemoryStore
+from context_drift_analyzer.cli.main import cmd_status, cmd_reset, cmd_history, cmd_freeze, cmd_unfreeze
+from context_drift_analyzer.persistence.session_memory import SessionMemoryData, SessionMemoryStore
 
 
 class FakeArgs:

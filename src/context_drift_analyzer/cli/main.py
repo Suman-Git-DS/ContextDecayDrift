@@ -1,17 +1,17 @@
-"""CLI tool for context-decay-drift.
+"""CLI tool for context-drift-analyzer.
 
 Commands:
-    context-decay-drift status  — Show session memory status
-    context-decay-drift reset   — Delete session memory file
-    context-decay-drift history — Show drift history
-    context-decay-drift freeze  — Freeze context (prevent modifications)
-    context-decay-drift unfreeze — Unfreeze context
+    context-drift-analyzer status  — Show session memory status
+    context-drift-analyzer reset   — Delete session memory file
+    context-drift-analyzer history — Show drift history
+    context-drift-analyzer freeze  — Freeze context (prevent modifications)
+    context-drift-analyzer unfreeze — Unfreeze context
 
 Usage:
-    python -m context_decay_drift.cli.main status
-    python -m context_decay_drift.cli.main status --file .session_memory
-    python -m context_decay_drift.cli.main reset
-    python -m context_decay_drift.cli.main history --last 10
+    python -m context_drift_analyzer.cli.main status
+    python -m context_drift_analyzer.cli.main status --file .session_memory
+    python -m context_drift_analyzer.cli.main reset
+    python -m context_drift_analyzer.cli.main history --last 10
 """
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ import argparse
 import json
 import sys
 
-from context_decay_drift.persistence.session_memory import SessionMemoryStore
+from context_drift_analyzer.persistence.session_memory import SessionMemoryStore
 
 
 def cmd_status(args: argparse.Namespace) -> None:
@@ -121,7 +121,7 @@ def cmd_unfreeze(args: argparse.Namespace) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        prog="context-decay-drift",
+        prog="context-drift-analyzer",
         description="Monitor context drift in LLM conversations",
     )
     subparsers = parser.add_subparsers(dest="command", help="Available commands")

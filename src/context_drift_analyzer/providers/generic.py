@@ -5,7 +5,7 @@ the OpenAI or Anthropic patterns. You manually feed user messages
 and assistant responses, and the wrapper tracks drift.
 
 Usage:
-    from context_decay_drift.providers.generic import GenericDriftTracker
+    from context_drift_analyzer.providers.generic import GenericDriftTracker
 
     tracker = GenericDriftTracker(
         system_prompt="You are a helpful assistant..."
@@ -25,11 +25,11 @@ from __future__ import annotations
 
 from typing import Optional
 
-from context_decay_drift.core.analyzer import DriftAnalyzer
-from context_decay_drift.core.scorer import DriftScore
-from context_decay_drift.core.session import Session
-from context_decay_drift.providers.base import BaseProvider
-from context_decay_drift.strategies.base import BaseStrategy
+from context_drift_analyzer.core.analyzer import DriftAnalyzer
+from context_drift_analyzer.core.scorer import DriftScore
+from context_drift_analyzer.core.session import Session
+from context_drift_analyzer.providers.base import BaseProvider
+from context_drift_analyzer.strategies.base import BaseStrategy
 
 
 class GenericDriftTracker(BaseProvider):

@@ -1,7 +1,7 @@
 """Tests for context window manager."""
 
 import pytest
-from context_decay_drift.context.manager import ContextManager, SessionSummary
+from context_drift_analyzer.context.manager import ContextManager, SessionSummary
 
 
 class TestContextManager:

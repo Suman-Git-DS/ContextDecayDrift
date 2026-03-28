@@ -1,7 +1,7 @@
 """Tests for Session v2 features (FewShotExample, initial_context)."""
 
 import pytest
-from context_decay_drift.core.session import Session, FewShotExample
+from context_drift_analyzer.core.session import Session, FewShotExample
 
 
 class TestFewShotExample:

@@ -4,7 +4,7 @@ import os
 import tempfile
 import pytest
 
-from context_decay_drift import DriftTracker, FewShotExample, DriftVerdict
+from context_drift_analyzer import DriftTracker, FewShotExample, DriftVerdict
 
 
 SYSTEM_PROMPT = (

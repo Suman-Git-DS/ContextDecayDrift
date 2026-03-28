@@ -5,7 +5,7 @@ import os
 import pytest
 import tempfile
 
-from context_decay_drift.persistence.session_memory import (
+from context_drift_analyzer.persistence.session_memory import (
     SessionMemoryData,
     SessionMemoryStore,
 )

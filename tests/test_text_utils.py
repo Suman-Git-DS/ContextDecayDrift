@@ -1,7 +1,7 @@
 """Tests for text utility functions."""
 
 import pytest
-from context_decay_drift.utils.text import (
+from context_drift_analyzer.utils.text import (
     tokenize,
     extract_keywords,
     ngrams,

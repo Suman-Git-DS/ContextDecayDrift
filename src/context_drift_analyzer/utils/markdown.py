@@ -15,11 +15,12 @@ def strip_markdown(text: str) -> str:
     Strips: code blocks, inline code, headers, bold, italic,
     links, images, tables, blockquotes, horizontal rules.
     """
-    # Remove fenced code blocks (``` ... ```)
-    text = re.sub(r"```[\s\S]*?```", " ", text)
+    # Remove fenced code block markers but KEEP the code content
+    # (code content is valuable for semantic drift analysis)
+    text = re.sub(r"```\w*\n?", " ", text)
 
-    # Remove inline code (`...`)
-    text = re.sub(r"`[^`]+`", " ", text)
+    # Remove inline code backticks but keep content
+    text = re.sub(r"`([^`]+)`", r"\1", text)
 
     # Remove images ![alt](url)
     text = re.sub(r"!\[.*?\]\(.*?\)", " ", text)

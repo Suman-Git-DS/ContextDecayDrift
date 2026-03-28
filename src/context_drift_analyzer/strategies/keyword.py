@@ -7,8 +7,8 @@ that the assistant is drifting away from its instructions.
 
 from __future__ import annotations
 
-from context_decay_drift.strategies.base import BaseStrategy
-from context_decay_drift.utils.text import extract_keywords, tokenize
+from context_drift_analyzer.strategies.base import BaseStrategy
+from context_drift_analyzer.utils.text import extract_keywords, tokenize
 
 
 class KeywordStrategy(BaseStrategy):

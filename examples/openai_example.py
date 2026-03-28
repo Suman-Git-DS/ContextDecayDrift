@@ -1,43 +1,61 @@
-"""Example: Using context-decay-drift with OpenAI.
+"""Example: Drop-in wrapper for OpenAI — banking chatbot with drift tracking.
 
 Install:
-    pip install context-decay-drift[openai]
+    pip install context-drift-analyzer[openai]
 
 Set your API key:
     export OPENAI_API_KEY="sk-..."
 """
 
 from openai import OpenAI
-from context_decay_drift.providers.openai_provider import OpenAIDriftWrapper
+from context_drift_analyzer import wrap, FewShotExample
 
 client = OpenAI()
 
-wrapper = OpenAIDriftWrapper(
-    client=client,
-    model="gpt-4o-mini",
+# Wrap the client — use it exactly like the original
+tracked = wrap(
+    client,
     system_prompt=(
-        "You are a Python programming tutor. Help students learn Python concepts "
-        "including variables, functions, loops, classes, and error handling. "
-        "Always provide code examples and explain step by step."
+        "You are a banking assistant for Acme Bank. Help customers with savings accounts, "
+        "credit cards, loans, and account inquiries. Always provide accurate financial "
+        "information and guide customers to the right products."
     ),
-    decay_rate=0.95,
-    window_size=5,
+    few_shot_examples=[
+        FewShotExample(
+            user="What interest rate do your savings accounts offer?",
+            assistant="Our standard savings account offers 4.5% APY. Premium savings offers 5.1% APY for balances over $10,000.",
+        ),
+    ],
+    mode="always",
+    persist=True,
 )
 
-# Simulate a multi-turn conversation
+# Banking-related questions followed by off-topic ones
 questions = [
-    "How do I define a function in Python?",
-    "What are list comprehensions?",
-    "Can you explain decorators?",
-    "What's the weather like today?",       # off-topic
-    "Tell me a joke about cats",             # off-topic
-    "What's the best restaurant in NYC?",    # off-topic
+    "What credit cards do you offer?",
+    "How do I apply for a home loan?",
+    "Can I open a joint checking account?",
+    "What's the weather like today?",           # off-topic
+    "Tell me a joke about cats",                # off-topic
+    "What's the best restaurant in NYC?",       # off-topic
 ]
 
 for question in questions:
-    result = wrapper.chat(question)
+    response = tracked.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a banking assistant for Acme Bank."},
+            {"role": "user", "content": question},
+        ],
+    )
+
+    content = response.choices[0].message.content
     print(f"User: {question}")
-    print(f"Assistant: {result.content[:100]}...")
-    print(f"  Drift Score: {result.drift_score:.1f}/100 ({result.drift_verdict})")
-    print(f"  Effective: {result.drift.is_effective} | Needs Reset: {result.drift.needs_reset}")
+    print(f"Assistant: {content[:100]}...")
+    print(f"  Drift: {response._drift.score:.1f}/100 ({response._drift.verdict.value})")
+    print(f"  Explanation: {response._drift_explanation}")
     print()
+
+# End session
+report = tracked.end_session()
+print(f"--- Session ended (final score: {report.drift.score:.1f}) ---")

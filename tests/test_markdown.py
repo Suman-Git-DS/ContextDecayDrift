@@ -1,20 +1,23 @@
 """Tests for markdown stripping utilities."""
 
 import pytest
-from context_decay_drift.utils.markdown import strip_markdown
+from context_drift_analyzer.utils.markdown import strip_markdown
 
 
 class TestStripMarkdown:
     def test_code_blocks(self):
         text = "Here is code:\n```python\ndef hello():\n    print('hi')\n```\nDone."
         result = strip_markdown(text)
-        assert "def hello" not in result
+        # Code block markers removed but content preserved
+        assert "```" not in result
+        assert "def hello" in result
         assert "Done" in result
 
     def test_inline_code(self):
         text = "Use the `print()` function to output."
         result = strip_markdown(text)
         assert "`" not in result
+        assert "print()" in result  # content preserved
         assert "function" in result
 
     def test_headers(self):

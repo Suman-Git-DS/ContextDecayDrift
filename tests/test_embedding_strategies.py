@@ -3,8 +3,8 @@
 import math
 import pytest
 
-from context_decay_drift.strategies.embedding_base import EmbeddingStrategy
-from context_decay_drift.strategies.callable_embedding import CallableEmbeddingStrategy
+from context_drift_analyzer.strategies.embedding_base import EmbeddingStrategy
+from context_drift_analyzer.strategies.callable_embedding import CallableEmbeddingStrategy
 
 
 SYSTEM_PROMPT = (
@@ -173,7 +173,7 @@ class TestFewShotWithEmbedding:
     """Test that few-shot examples in the initial context improve drift detection."""
 
     def test_few_shot_context_used(self):
-        from context_decay_drift import Session, DriftAnalyzer, FewShotExample
+        from context_drift_analyzer import Session, DriftAnalyzer, FewShotExample
 
         session = Session(
             system_prompt="You are a Python tutor.",
@@ -196,7 +196,7 @@ class TestFewShotWithEmbedding:
         assert "loops iterate" in ctx
 
     def test_few_shot_affects_drift_score(self):
-        from context_decay_drift import Session, DriftAnalyzer, FewShotExample
+        from context_drift_analyzer import Session, DriftAnalyzer, FewShotExample
 
         strategy = CallableEmbeddingStrategy(embed_fn=fake_embedder)
         analyzer = DriftAnalyzer(strategies=[strategy], decay_rate=0.99)

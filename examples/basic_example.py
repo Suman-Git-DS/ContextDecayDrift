@@ -1,21 +1,21 @@
-"""Example: Basic drift tracking with DriftTracker.
+"""Example: Basic drift tracking for a banking chatbot.
 
 No extra dependencies needed:
-    pip install context-decay-drift
+    pip install context-drift-analyzer
 """
 
-from context_decay_drift import DriftTracker, FewShotExample
+from context_drift_analyzer import DriftTracker, FewShotExample
 
 tracker = DriftTracker(
     system_prompt=(
-        "You are a Python programming tutor. Help students learn Python concepts "
-        "including variables, functions, loops, classes, and error handling. "
-        "Always provide code examples and explain step by step."
+        "You are a banking assistant for Acme Bank. Help customers with savings accounts, "
+        "credit cards, loans, and account inquiries. Always provide accurate financial "
+        "information and guide customers to the right products."
     ),
     few_shot_examples=[
         FewShotExample(
-            user="What is a variable?",
-            assistant="A variable stores data. Example: x = 5",
+            user="What interest rate do your savings accounts offer?",
+            assistant="Our standard savings account offers 4.5% APY. Premium savings offers 5.1% APY for balances over $10,000.",
         ),
     ],
     mode="always",
@@ -23,13 +23,28 @@ tracker = DriftTracker(
     max_summary_sessions=3,
 )
 
-# Simulate a multi-turn conversation
+# Simulate a multi-turn conversation that progressively drifts from banking
 conversations = [
-    ("How do I use loops?", "In Python, for loops iterate: for i in range(10): print(i). While loops run until a condition is false."),
-    ("What about functions?", "Functions use def: def greet(name): return f'Hello {name}'. Functions organize code into reusable blocks."),
-    ("Tell me about movies", "The latest blockbuster has amazing effects. Critics gave it 4/5 stars."),
-    ("What's for dinner?", "Try grilled salmon with vegetables. Season with lemon and herbs."),
-    ("Any travel tips?", "Pack light, use public transport, book early for better rates."),
+    (
+        "What credit cards do you offer?",
+        "We offer three credit cards: Acme Rewards (1.5% cashback), Acme Travel (3x points on travel), and Acme Business (2% on business expenses). All have no annual fee for the first year.",
+    ),
+    (
+        "How do I apply for a home loan?",
+        "You can apply for a home loan online at acmebank.com/loans or visit any branch. You'll need your ID, proof of income, 2 years of tax returns, and a down payment of at least 3.5% for FHA or 20% for conventional.",
+    ),
+    (
+        "What's a good pasta recipe?",
+        "Try pasta carbonara! Boil spaghetti, fry pancetta until crispy, mix with eggs and parmesan, and toss with the hot pasta. Season with black pepper.",
+    ),
+    (
+        "Tell me about the best travel destinations",
+        "Bali is amazing for beaches, Tokyo for culture, and Switzerland for mountains. Book flights 3 months ahead for the best deals.",
+    ),
+    (
+        "How tall is the Eiffel Tower?",
+        "The Eiffel Tower stands 330 meters tall including antennas. It was built in 1889 and attracts about 7 million visitors annually.",
+    ),
 ]
 
 print("Turn | Score | Verdict    | Explanation")

@@ -3,7 +3,7 @@
 Uses OpenAI's embedding models to measure drift. Requires an OpenAI API key.
 
 Install:
-    pip install context-decay-drift[openai]
+    pip install context-drift-analyzer[openai]
 
 Models:
     - "text-embedding-3-small" : Cheap, fast, 1536 dims (default)
@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from context_decay_drift.strategies.embedding_base import EmbeddingStrategy
+from context_drift_analyzer.strategies.embedding_base import EmbeddingStrategy
 
 
 class OpenAIEmbeddingStrategy(EmbeddingStrategy):

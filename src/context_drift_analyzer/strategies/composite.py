@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from context_decay_drift.strategies.base import BaseStrategy
+from context_drift_analyzer.strategies.base import BaseStrategy
 
 
 class CompositeStrategy(BaseStrategy):

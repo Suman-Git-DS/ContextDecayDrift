@@ -6,6 +6,12 @@ All embedding strategies share the same scoring logic:
 3. Cosine similarity between them → drift score (0-100)
 
 Subclasses only need to implement `embed()` for their specific backend.
+
+IMPORTANT: Cosine similarity between instruction-style text (system prompts)
+and response-style text (assistant replies) typically ranges from 0.1 to 0.5,
+not 0 to 1. A raw cosine of 0.3 between a system prompt and an on-topic
+response is actually good alignment. We use calibrated scaling to map the
+realistic range [0, 0.6] → [0, 100] so drift scores are meaningful.
 """
 
 from __future__ import annotations
@@ -14,7 +20,12 @@ import math
 from abc import abstractmethod
 from typing import Optional
 
-from context_decay_drift.strategies.base import BaseStrategy
+from context_drift_analyzer.strategies.base import BaseStrategy
+
+# Calibration: in practice, cosine similarity between a system prompt
+# (instruction text) and an on-topic response rarely exceeds 0.55-0.60.
+# We scale the [0, MAX_EXPECTED_SIM] range to [0, 100].
+MAX_EXPECTED_SIMILARITY = 0.55
 
 
 class EmbeddingStrategy(BaseStrategy):
@@ -24,15 +35,23 @@ class EmbeddingStrategy(BaseStrategy):
     sentence-transformers, OpenAI API, Cohere, Voyage, or any custom model.
 
     The scoring logic is shared: cosine similarity between the reference
-    embedding (initial context) and the current conversation embedding.
+    embedding (initial context) and the current conversation embedding,
+    with calibrated scaling so scores are meaningful.
 
     Args:
         cache_reference: If True, caches the reference embedding after first
             computation so it's not re-embedded on every call. Default True.
+        max_similarity: Expected maximum cosine similarity for perfect
+            alignment. Used to scale scores. Default 0.55.
     """
 
-    def __init__(self, cache_reference: bool = True):
+    def __init__(
+        self,
+        cache_reference: bool = True,
+        max_similarity: float = MAX_EXPECTED_SIMILARITY,
+    ):
         self._cache_reference = cache_reference
+        self._max_similarity = max_similarity
         self._ref_cache: dict[str, list[float]] = {}
 
     @abstractmethod
@@ -63,10 +82,14 @@ class EmbeddingStrategy(BaseStrategy):
         current_embedding = self.embed(current_text)
 
         # Compute cosine similarity
-        similarity = self._cosine_similarity(ref_embedding, current_embedding)
+        raw_similarity = self._cosine_similarity(ref_embedding, current_embedding)
 
-        # Scale to 0-100
-        score = max(0.0, similarity * 100.0)
+        # Calibrated scaling: map [0, max_similarity] → [0, 100]
+        # This ensures that realistic on-topic responses score high (70-95)
+        # rather than low (20-40) due to the instruction-vs-response gap.
+        scaled = (raw_similarity / self._max_similarity) * 100.0
+        score = max(0.0, min(100.0, scaled))
+
         return score, {self.name: round(score, 2)}
 
     def _get_reference_embedding(self, text: str) -> list[float]:

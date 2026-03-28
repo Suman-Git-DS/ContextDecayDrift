@@ -1,7 +1,7 @@
 """Tests for drift explainer."""
 
 import pytest
-from context_decay_drift.context.explainer import DriftExplainer
+from context_drift_analyzer.context.explainer import DriftExplainer
 
 
 SYSTEM_PROMPT = (

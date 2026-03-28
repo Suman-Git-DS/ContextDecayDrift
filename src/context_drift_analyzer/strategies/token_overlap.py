@@ -7,8 +7,8 @@ staying on-topic; low similarity means drift.
 
 from __future__ import annotations
 
-from context_decay_drift.strategies.base import BaseStrategy
-from context_decay_drift.utils.text import (
+from context_drift_analyzer.strategies.base import BaseStrategy
+from context_drift_analyzer.utils.text import (
     cosine_similarity,
     term_frequency,
     tokenize,

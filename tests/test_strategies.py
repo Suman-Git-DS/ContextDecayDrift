@@ -1,9 +1,9 @@
 """Tests for drift measurement strategies."""
 
 import pytest
-from context_decay_drift.strategies.keyword import KeywordStrategy
-from context_decay_drift.strategies.token_overlap import TokenOverlapStrategy
-from context_decay_drift.strategies.composite import CompositeStrategy
+from context_drift_analyzer.strategies.keyword import KeywordStrategy
+from context_drift_analyzer.strategies.token_overlap import TokenOverlapStrategy
+from context_drift_analyzer.strategies.composite import CompositeStrategy
 
 
 SYSTEM_PROMPT = (

@@ -1,10 +1,10 @@
 """Tests for the DriftAnalyzer."""
 
 import pytest
-from context_decay_drift.core.analyzer import DriftAnalyzer
-from context_decay_drift.core.session import Session
-from context_decay_drift.core.scorer import DriftVerdict
-from context_decay_drift.strategies.keyword import KeywordStrategy
+from context_drift_analyzer.core.analyzer import DriftAnalyzer
+from context_drift_analyzer.core.session import Session
+from context_drift_analyzer.core.scorer import DriftVerdict
+from context_drift_analyzer.strategies.keyword import KeywordStrategy
 
 
 SYSTEM_PROMPT = (

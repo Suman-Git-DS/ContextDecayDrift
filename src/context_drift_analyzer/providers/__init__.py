@@ -7,8 +7,8 @@ any LLM pipeline.
 The GenericDriftTracker is kept for backward compatibility.
 """
 
-from context_decay_drift.providers.base import BaseProvider, DriftAwareResponse
-from context_decay_drift.providers.generic import GenericDriftTracker
+from context_drift_analyzer.providers.base import BaseProvider, DriftAwareResponse
+from context_drift_analyzer.providers.generic import GenericDriftTracker
 
 __all__ = [
     "BaseProvider",

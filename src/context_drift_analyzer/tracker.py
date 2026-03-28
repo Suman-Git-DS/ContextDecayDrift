@@ -1,4 +1,4 @@
-"""Unified drift tracker — the main entry point for context-decay-drift.
+"""Unified drift tracker — the main entry point for context-drift-analyzer.
 
 This is the single wrapper for any LLM pipeline. It combines:
 - Drift detection (semantic or lexical strategies)
@@ -8,7 +8,7 @@ This is the single wrapper for any LLM pipeline. It combines:
 - On-demand or always-on scoring modes
 
 Usage:
-    from context_decay_drift import DriftTracker
+    from context_drift_analyzer import DriftTracker
 
     tracker = DriftTracker(
         system_prompt="You are a Python tutor...",
@@ -36,17 +36,17 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Callable, Optional
 
-from context_decay_drift.context.explainer import DriftExplainer
-from context_decay_drift.context.manager import ContextManager
-from context_decay_drift.core.analyzer import DriftAnalyzer
-from context_decay_drift.core.scorer import DriftScore, DriftVerdict
-from context_decay_drift.core.session import FewShotExample, Session
-from context_decay_drift.persistence.session_memory import (
+from context_drift_analyzer.context.explainer import DriftExplainer
+from context_drift_analyzer.context.manager import ContextManager
+from context_drift_analyzer.core.analyzer import DriftAnalyzer
+from context_drift_analyzer.core.scorer import DriftScore, DriftVerdict
+from context_drift_analyzer.core.session import FewShotExample, Session
+from context_drift_analyzer.persistence.session_memory import (
     SessionMemoryData,
     SessionMemoryStore,
 )
-from context_decay_drift.strategies.base import BaseStrategy
-from context_decay_drift.utils.markdown import strip_markdown
+from context_drift_analyzer.strategies.base import BaseStrategy
+from context_drift_analyzer.utils.markdown import strip_markdown
 
 
 @dataclass

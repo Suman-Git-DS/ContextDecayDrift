@@ -1,33 +1,32 @@
-"""Example: Semantic drift detection with sentence-transformers.
+"""Example: Semantic drift detection for a banking chatbot using sentence-transformers.
 
 Install:
-    pip install context-decay-drift[semantic]
+    pip install context-drift-analyzer[semantic]
 
 No API key needed — runs entirely locally.
 """
 
-from context_decay_drift import DriftAnalyzer, Session, FewShotExample
-from context_decay_drift.strategies.sentence_transformer import SentenceTransformerStrategy
+from context_drift_analyzer import DriftAnalyzer, Session, FewShotExample
+from context_drift_analyzer.strategies.sentence_transformer import SentenceTransformerStrategy
 
-# Define the full initial context
+# Define the banking assistant context
 session = Session(
     system_prompt=(
-        "You are a Python programming tutor. Help students learn Python concepts "
-        "including variables, functions, loops, classes, and error handling. "
-        "Always provide code examples and explain step by step."
+        "You are a banking assistant for Acme Bank. Help customers with savings accounts, "
+        "credit cards, loans, and account inquiries. Always provide accurate financial "
+        "information and guide customers to the right products."
     ),
     few_shot_examples=[
         FewShotExample(
-            user="What is a variable?",
-            assistant="A variable in Python stores data values. You create one by "
-            "assigning a value: x = 5. Variables can hold strings, numbers, lists, "
-            "and more. Example: name = 'Alice'",
+            user="What interest rate do your savings accounts offer?",
+            assistant="Our standard savings account offers 4.5% APY. Premium savings "
+            "offers 5.1% APY for balances over $10,000. Both are FDIC insured.",
         ),
         FewShotExample(
-            user="How do loops work?",
-            assistant="Python has two main loop types: for and while. A for loop "
-            "iterates over a sequence: for i in range(5): print(i). A while loop "
-            "runs until a condition is false: while x > 0: x -= 1",
+            user="How do I apply for a credit card?",
+            assistant="You can apply online at acmebank.com/cards or visit any branch. "
+            "You'll need your ID, proof of income, and SSN. Approval typically takes "
+            "1-2 business days.",
         ),
     ],
 )
@@ -39,27 +38,30 @@ analyzer = DriftAnalyzer(
     window_size=5,
 )
 
-# Simulate a multi-turn conversation that progressively drifts
+# Simulate a conversation that starts on-topic then drifts
 conversations = [
-    ("How do I define a function?",
-     "Use the def keyword. Example: def greet(name): return f'Hello {name}'. "
-     "Functions help organize code into reusable blocks."),
+    ("What are the requirements for a home loan?",
+     "For a home loan at Acme Bank, you'll need a credit score of 620+, proof of income, "
+     "2 years of tax returns, and a down payment of at least 3.5% for FHA loans or 20% "
+     "for conventional loans. Current rates start at 6.2% APR."),
 
-    ("What about classes?",
-     "Classes are blueprints for objects. Example: class Dog: def __init__(self, name): "
-     "self.name = name. Use classes for object-oriented programming in Python."),
+    ("Can I refinance my existing mortgage?",
+     "Yes! Refinancing can lower your monthly payments or shorten your loan term. "
+     "You'll need your current mortgage statement, recent pay stubs, and a home appraisal. "
+     "Our refinance rates start at 5.8% APR for qualified borrowers."),
 
-    ("Can you explain error handling?",
-     "Use try/except blocks. Example: try: result = 10/0 except ZeroDivisionError: "
-     "print('Cannot divide by zero'). Always handle specific exceptions."),
+    ("What about your business checking accounts?",
+     "Our business checking offers unlimited transactions, free online banking, and "
+     "integrated payroll. Basic plan is free with $5,000 minimum balance, Premium plan "
+     "is $25/month with cash management tools."),
 
-    ("What's a good recipe for dinner?",
-     "Try making pasta carbonara! Boil spaghetti, fry pancetta, mix with eggs and parmesan. "
-     "Season with black pepper and serve immediately."),
+    ("What's a good recipe for dinner tonight?",
+     "Try making grilled salmon with a lemon herb butter! Season with salt, pepper, and "
+     "garlic. Serve with roasted asparagus and rice pilaf. Takes about 25 minutes."),
 
-    ("Tell me about the weather",
-     "Today's forecast shows sunny skies with a high of 75 degrees. "
-     "Tomorrow might bring afternoon showers."),
+    ("Tell me about the best vacation spots",
+     "Bali offers stunning beaches and temples, Japan has incredible food and culture, "
+     "and Iceland has breathtaking northern lights. Book flights 3 months ahead for deals."),
 ]
 
 print("Turn | Score  | Verdict    | Effective | Topic")

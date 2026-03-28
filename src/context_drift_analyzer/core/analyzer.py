@@ -4,12 +4,35 @@ from __future__ import annotations
 
 from typing import Optional
 
-from context_decay_drift.core.scorer import DriftScore, DriftVerdict
-from context_decay_drift.core.session import Session
-from context_decay_drift.strategies.base import BaseStrategy
-from context_decay_drift.strategies.composite import CompositeStrategy
-from context_decay_drift.strategies.keyword import KeywordStrategy
-from context_decay_drift.strategies.token_overlap import TokenOverlapStrategy
+from context_drift_analyzer.core.scorer import DriftScore, DriftVerdict
+from context_drift_analyzer.core.session import Session
+from context_drift_analyzer.strategies.base import BaseStrategy
+from context_drift_analyzer.strategies.composite import CompositeStrategy
+from context_drift_analyzer.strategies.keyword import KeywordStrategy
+from context_drift_analyzer.strategies.token_overlap import TokenOverlapStrategy
+
+
+def _build_default_strategy() -> BaseStrategy:
+    """Build the best available default strategy.
+
+    Prefers SentenceTransformerStrategy (semantic) if sentence-transformers
+    is installed, otherwise falls back to keyword + token overlap (lexical).
+    """
+    try:
+        from context_drift_analyzer.strategies.sentence_transformer import (
+            SentenceTransformerStrategy,
+        )
+        # Test that the import actually works (not just the module but the dep)
+        from sentence_transformers import SentenceTransformer  # noqa: F401
+
+        return SentenceTransformerStrategy()
+    except ImportError:
+        return CompositeStrategy(
+            [
+                KeywordStrategy(),
+                TokenOverlapStrategy(),
+            ]
+        )
 
 
 class DriftAnalyzer:
@@ -18,8 +41,12 @@ class DriftAnalyzer:
     The analyzer accepts one or more strategies that each produce a sub-score.
     Scores are combined (weighted average) into a single 0-100 drift score.
 
+    If no strategies are provided, automatically uses SentenceTransformerStrategy
+    when sentence-transformers is installed (semantic, accurate), or falls back
+    to keyword + token overlap (lexical, zero dependencies).
+
     Args:
-        strategies: List of strategies to use. If None, uses default set.
+        strategies: List of strategies to use. If None, auto-detects best available.
         decay_rate: Exponential decay factor applied per turn (0-1).
             Lower values mean faster decay. Default 0.95.
         window_size: Number of recent assistant turns to consider
@@ -47,12 +74,7 @@ class DriftAnalyzer:
                 else CompositeStrategy(strategies)
             )
         else:
-            self.strategy = CompositeStrategy(
-                [
-                    KeywordStrategy(),
-                    TokenOverlapStrategy(),
-                ]
-            )
+            self.strategy = _build_default_strategy()
 
     def analyze(self, session: Session) -> DriftScore:
         """Compute drift score for the current state of a session.

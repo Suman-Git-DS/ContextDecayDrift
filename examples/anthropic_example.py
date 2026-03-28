@@ -1,44 +1,58 @@
-"""Example: Using context-decay-drift with Anthropic.
+"""Example: Drop-in wrapper for Anthropic — banking chatbot with drift tracking.
 
 Install:
-    pip install context-decay-drift[anthropic]
+    pip install context-drift-analyzer[anthropic]
 
 Set your API key:
     export ANTHROPIC_API_KEY="sk-ant-..."
 """
 
 from anthropic import Anthropic
-from context_decay_drift.providers.anthropic_provider import AnthropicDriftWrapper
+from context_drift_analyzer import wrap, FewShotExample
 
 client = Anthropic()
 
-wrapper = AnthropicDriftWrapper(
-    client=client,
-    model="claude-sonnet-4-20250514",
+# Wrap the client — use it exactly like the original
+tracked = wrap(
+    client,
     system_prompt=(
-        "You are a Python programming tutor. Help students learn Python concepts "
-        "including variables, functions, loops, classes, and error handling. "
-        "Always provide code examples and explain step by step."
+        "You are a banking assistant for Acme Bank. Help customers with savings accounts, "
+        "credit cards, loans, and account inquiries. Always provide accurate financial "
+        "information and guide customers to the right products."
     ),
-    max_tokens=512,
-    decay_rate=0.95,
+    few_shot_examples=[
+        FewShotExample(
+            user="How do I open a savings account?",
+            assistant="Visit any Acme Bank branch with your government-issued ID and proof of address. You can also open one online at acmebank.com. Minimum opening deposit is $25.",
+        ),
+    ],
+    mode="always",
+    persist=True,
 )
 
-# Simulate a conversation
+# Banking questions followed by off-topic drift
 questions = [
-    "How do I use classes in Python?",
-    "Explain inheritance with an example",
-    "What's a good pasta recipe?",           # off-topic
-    "How tall is the Eiffel Tower?",          # off-topic
+    "What are your mortgage rates?",
+    "Can I set up automatic bill pay?",
+    "What's a good pasta recipe?",              # off-topic
+    "How tall is the Eiffel Tower?",            # off-topic
 ]
 
 for question in questions:
-    result = wrapper.chat(question)
-    print(f"User: {question}")
-    print(f"  Drift: {result.drift_score:.1f}/100 ({result.drift_verdict})")
+    response = tracked.messages.create(
+        model="claude-haiku-4-5-20251001",
+        system="You are a banking assistant for Acme Bank.",
+        messages=[{"role": "user", "content": question}],
+        max_tokens=512,
+    )
 
-    if result.drift.needs_reset:
+    content = response.content[0].text
+    print(f"User: {question}")
+    print(f"  Drift: {response._drift.score:.1f}/100 ({response._drift.verdict.value})")
+    print(f"  Explanation: {response._drift_explanation}")
+
+    if response._drift.needs_reset:
         print("  WARNING: Context has drifted too far. Consider resetting.")
-        wrapper.reset_session()
+        tracked.reset()
         print("  Session reset!")
     print()

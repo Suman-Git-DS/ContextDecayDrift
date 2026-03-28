@@ -5,7 +5,7 @@ Google, a local model, or anything else). Just pass a function that
 takes a string and returns a list of floats.
 
 Usage:
-    from context_decay_drift.strategies.callable_embedding import CallableEmbeddingStrategy
+    from context_drift_analyzer.strategies.callable_embedding import CallableEmbeddingStrategy
 
     # With Cohere
     import cohere
@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from typing import Callable
 
-from context_decay_drift.strategies.embedding_base import EmbeddingStrategy
+from context_drift_analyzer.strategies.embedding_base import EmbeddingStrategy
 
 
 class CallableEmbeddingStrategy(EmbeddingStrategy):

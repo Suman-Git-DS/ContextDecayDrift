@@ -4,7 +4,7 @@ Uses HuggingFace sentence-transformers to embed text into dense vectors
 and measure semantic similarity between initial context and conversation.
 
 Install:
-    pip install context-decay-drift[semantic]
+    pip install context-drift-analyzer[semantic]
     # or: pip install sentence-transformers
 
 Models (pick based on your tradeoff):
@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from context_decay_drift.strategies.embedding_base import EmbeddingStrategy
+from context_drift_analyzer.strategies.embedding_base import EmbeddingStrategy
 
 
 class SentenceTransformerStrategy(EmbeddingStrategy):
@@ -57,7 +57,7 @@ class SentenceTransformerStrategy(EmbeddingStrategy):
             except ImportError:
                 raise ImportError(
                     "sentence-transformers is required for SentenceTransformerStrategy. "
-                    "Install it with: pip install context-decay-drift[semantic] "
+                    "Install it with: pip install context-drift-analyzer[semantic] "
                     "or: pip install sentence-transformers"
                 )
             self._model = SentenceTransformer(

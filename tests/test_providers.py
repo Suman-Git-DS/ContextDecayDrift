@@ -1,9 +1,9 @@
 """Tests for provider wrappers."""
 
 import pytest
-from context_decay_drift.providers.generic import GenericDriftTracker
-from context_decay_drift.providers.base import DriftAwareResponse
-from context_decay_drift.core.scorer import DriftScore, DriftVerdict
+from context_drift_analyzer.providers.generic import GenericDriftTracker
+from context_drift_analyzer.providers.base import DriftAwareResponse
+from context_drift_analyzer.core.scorer import DriftScore, DriftVerdict
 
 
 SYSTEM_PROMPT = (

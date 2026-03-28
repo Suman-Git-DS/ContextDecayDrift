@@ -1,7 +1,7 @@
 """Tests for drift scoring and verdicts."""
 
 import pytest
-from context_decay_drift.core.scorer import DriftScore, DriftVerdict
+from context_drift_analyzer.core.scorer import DriftScore, DriftVerdict
 
 
 class TestDriftVerdict:
