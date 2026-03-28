@@ -17,19 +17,30 @@ class Turn:
 
 
 @dataclass
-class Session:
-    """Tracks a conversation session with its system prompt and turn history.
+class FewShotExample:
+    """A few-shot example pair used as initial context."""
 
-    A session represents a single continuous conversation with an LLM.
-    It stores the system prompt (the ground truth for drift measurement)
-    and all conversation turns.
+    user: str
+    assistant: str
+
+
+@dataclass
+class Session:
+    """Tracks a conversation session with its full initial context and turn history.
+
+    The initial context = system_prompt + few_shot_examples. This is the
+    "ground truth" that drift is measured against. Over time, as the
+    conversation progresses, responses may drift away from this baseline.
 
     Args:
         system_prompt: The original system prompt / instructions for the LLM.
+        few_shot_examples: Optional list of few-shot (user, assistant) pairs
+            that form part of the initial context.
         session_id: Optional identifier. Auto-generated if not provided.
     """
 
     system_prompt: str
+    few_shot_examples: list[FewShotExample] = field(default_factory=list)
     session_id: str = field(default_factory=lambda: uuid.uuid4().hex[:12])
     turns: list[Turn] = field(default_factory=list)
     _turn_counter: int = field(default=0, repr=False)
@@ -47,6 +58,18 @@ class Session:
         turn = Turn(role=role, content=content, turn_number=self._turn_counter)
         self.turns.append(turn)
         return turn
+
+    @property
+    def initial_context(self) -> str:
+        """The full initial context: system prompt + few-shot examples combined.
+
+        This is the reference text that drift is measured against.
+        """
+        parts = [self.system_prompt]
+        for ex in self.few_shot_examples:
+            parts.append(f"User: {ex.user}")
+            parts.append(f"Assistant: {ex.assistant}")
+        return "\n".join(parts)
 
     @property
     def turn_count(self) -> int:
@@ -72,6 +95,6 @@ class Session:
         return " ".join(t.content for t in self.turns)
 
     def reset(self) -> None:
-        """Clear all turns but keep the system prompt and session ID."""
+        """Clear all turns but keep the system prompt, few-shots, and session ID."""
         self.turns.clear()
         self._turn_counter = 0

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "context-decay-drift"
-version = "0.1.0"
+version = "0.2.0"
 description = "Measure and monitor context drift in LLM conversations across sessions"
 readme = "README.md"
 license = "MIT"
@@ -40,11 +40,11 @@ dependencies = []
 [project.optional-dependencies]
 openai = ["openai>=1.0.0"]
 anthropic = ["anthropic>=0.20.0"]
-semantic = ["scikit-learn>=1.0.0"]
+semantic = ["sentence-transformers>=2.0.0"]
 all = [
     "openai>=1.0.0",
     "anthropic>=0.20.0",
-    "scikit-learn>=1.0.0",
+    "sentence-transformers>=2.0.0",
 ]
 dev = [
     "pytest>=7.0.0",

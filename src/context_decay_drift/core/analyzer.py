@@ -77,9 +77,10 @@ class DriftAnalyzer:
         # Gather the text from the windowed assistant turns
         recent_texts = [t.content for t in assistant_turns]
 
-        # Calculate raw strategy score
+        # Calculate raw strategy score against the full initial context
+        # (system prompt + few-shot examples)
         raw_score, strategy_scores = self.strategy.score(
-            system_prompt=session.system_prompt,
+            system_prompt=session.initial_context,
             assistant_responses=recent_texts,
         )
 

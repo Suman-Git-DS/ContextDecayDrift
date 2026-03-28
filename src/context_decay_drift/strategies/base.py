@@ -9,7 +9,8 @@ class BaseStrategy(ABC):
     """Abstract base class for drift measurement strategies.
 
     Each strategy implements a specific way to measure how far the
-    conversation has drifted from the original system prompt.
+    conversation has drifted from the initial context (system prompt +
+    few-shot examples).
 
     Subclasses must implement `score()` which returns:
         - A float score in [0, 100] (100 = no drift)
@@ -30,7 +31,8 @@ class BaseStrategy(ABC):
         """Calculate drift score.
 
         Args:
-            system_prompt: The original system prompt text.
+            system_prompt: The full initial context text (system prompt +
+                few-shot examples combined).
             assistant_responses: Recent assistant response texts.
 
         Returns:
